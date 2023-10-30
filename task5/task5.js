@@ -36,9 +36,19 @@ bot.on("message", async (msg) => {
   } else if (msg.text.includes("at intervals of")) {
     if (msg.text.split(" ").at(-2) === "3") {
       sendMsgSetUpdate(msg.chat.id, 10800000);
-    } else {
+    } else if (msg.text.split(" ").at(-2) === "6") {
       sendMsgSetUpdate(msg.chat.id, 21600000);
     }
+    const response = await getWeather();
+    const { weather, name, wind, main } = response;
+    bot.sendMessage(
+      msg.chat.id,
+      `Now in ${name} is ${weather[0].description}\n
+    Temperature - ${Math.round(main.temp - 273)}, feels like - ${Math.round(
+        main.feels_like - 273
+      )}\n
+        Wind speed - ${Math.round(wind.speed)}`
+    );
   } else if (msg.text === "/currency") {
     bot.sendMessage(msg.chat.id, "Kryvyy Rih", {
       reply_markup: {
@@ -92,4 +102,3 @@ function getCurrencyCourse() {
     .get(`https://api.privatbank.ua/p24api/pubinfo?exchange&coursid=5`)
     .then((res) => res.data);
 }
-getCurrencyCourse();
